@@ -21,14 +21,14 @@ Esta é uma API RESTful para gerenciamento de hotéis e reservas, desenvolvida c
    npm run dev
    ```
 
-   O servidor estará disponível em `http://localhost:3000`.
+   O servidor estará disponível em [`http://localhost:3000`](http://localhost:3000).
 
 ## Documentação da API
 
 A documentação completa da API está disponível através do Swagger UI. Após iniciar o servidor, acesse:
 
 
-`http://localhost:3000/api-docs`
+[`http://localhost:3000/api-docs`](http://localhost:3000/api-docs)
 
 
 A interface do Swagger fornece:
