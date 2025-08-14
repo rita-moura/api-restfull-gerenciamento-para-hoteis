@@ -1,4 +1,6 @@
 import swaggerJsdoc from 'swagger-jsdoc';
+import fs from 'fs';
+import path from 'path';
 
 const options: swaggerJsdoc.Options = {
   definition: {
@@ -81,3 +83,14 @@ const options: swaggerJsdoc.Options = {
 };
 
 export const specs = swaggerJsdoc(options);
+
+// Gera o arquivo swagger.json se o script for executado diretamente
+if (require.main === module) {
+  console.log('Gerando swagger.json...');
+  const swaggerSpec = swaggerJsdoc(options);
+  fs.writeFileSync(
+    path.resolve(__dirname, '../swagger.json'),
+    JSON.stringify(swaggerSpec, null, 2)
+  );
+  console.log('swagger.json gerado com sucesso na raiz do projeto.');
+}
