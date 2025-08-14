@@ -89,8 +89,8 @@ if (require.main === module) {
   console.log('Gerando swagger.json...');
   const swaggerSpec = swaggerJsdoc(options);
   fs.writeFileSync(
-    path.resolve(__dirname, '../swagger.json'),
+    path.resolve(__dirname, '../docs/swagger.json'),
     JSON.stringify(swaggerSpec, null, 2)
   );
-  console.log('swagger.json gerado com sucesso na raiz do projeto.');
+  console.log('swagger.json gerado com sucesso em /docs.');
 }
