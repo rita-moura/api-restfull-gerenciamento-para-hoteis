@@ -36,23 +36,33 @@ app.get('/', (req, res) => {
 app.use(routes);
 app.use(errorHandler);
 
-const getIpAddress = (): string => {
-    const networkInterfaces = os.networkInterfaces();
-    for (const interfaceName in networkInterfaces) {
-        const networkInterface = networkInterfaces[interfaceName];
-        if (networkInterface) {
-            for (const interfaceInfo of networkInterface) {
-                if (interfaceInfo.family === 'IPv4' && !interfaceInfo.internal) {
-                    return interfaceInfo.address;
+// Função para obter os endereços IP da rede local
+const getNetworkIps = (): string[] => {
+    const ips: string[] = [];
+    const interfaces = os.networkInterfaces();
+    for (const name of Object.keys(interfaces)) {
+        const anInterface = interfaces[name];
+        if(anInterface) {
+            for (const iface of anInterface) {
+                // Pular endereços internos (ex: 127.0.0.1) e não-ipv4
+                if (iface.family === 'IPv4' && !iface.internal) {
+                    ips.push(iface.address);
                 }
             }
         }
     }
-    return 'localhost'; // Fallback
+    return ips;
 };
 
-const host = getIpAddress();
-
 app.listen(port, '0.0.0.0', () => {
-  console.log(`Server is running at http://${host}:${port}`);
+  console.log(`Servidor rodando na porta ${port}`);
+  console.log(`Acesse localmente em: http://localhost:${port}`);
+  
+  const localIps = getNetworkIps();
+  if (localIps.length > 0) {
+    console.log('Ou acesse de outros dispositivos na mesma rede em:');
+    localIps.forEach(ip => {
+      console.log(`- http://${ip}:${port}`);
+    });
+  }
 });
