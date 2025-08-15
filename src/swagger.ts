@@ -27,7 +27,7 @@ const options: swaggerJsdoc.Options = {
         description: 'Servidor de Rede',
         variables: {
           localIp: {
-            default: '192.168.1.7',
+            default: '172.17.0.1',
             description: 'IP da máquina na rede local'
           }
         }
