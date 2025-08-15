@@ -19,12 +19,8 @@ const options: swaggerJsdoc.Options = {
     ],
     servers: [
       {
-        url: 'http://192.168.1.7:3000',
-        description: 'Servidor de Desenvolvimento Local'
-      },
-      {
-        url: 'https://rita-moura.github.io/api-restfull-gerenciamento-para-hoteis',
-        description: 'Servidor do GitHub Pages'
+        url: '/',
+        description: 'Servidor Relativo'
       }
     ],
     components: {
