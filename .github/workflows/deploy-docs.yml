@@ -3,7 +3,7 @@ name: Deploy Swagger Docs to GitHub Pages
 on:
   push:
     branches:
-      - main # Ou a branch que você usa como principal
+      - main
 
 jobs:
   deploy:
@@ -24,7 +24,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '18' # Pode ajustar para a sua versão do Node.js
+          node-version: '18'
           cache: 'npm'
 
       - name: Install dependencies

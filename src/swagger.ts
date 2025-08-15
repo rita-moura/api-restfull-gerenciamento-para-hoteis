@@ -89,7 +89,7 @@ const options: swaggerJsdoc.Options = {
       }
     }
   },
-  apis: ['./src/routes/*.ts'], // Arquivos que contêm as anotações do Swagger
+  apis: ['./src/routes/*.ts'],
 };
 
 export const specs = swaggerJsdoc(options);

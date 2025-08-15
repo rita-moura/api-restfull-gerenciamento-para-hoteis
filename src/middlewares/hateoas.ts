@@ -11,7 +11,9 @@ interface HateoasLink {
 }
 
 const addLinks = (resource: any, type: ResourceType, req: Request): void => {
-  const baseUrl = `${req.protocol}://${req.get('host')}`;
+  const protocol = req.headers['x-forwarded-proto'] || req.protocol;
+  const host = req.headers['x-forwarded-host'] || req.get('host') || '172.17.0.1';
+  const baseUrl = `${protocol}://${host}`;
   resource._links = [];
 
   if (type === 'hotel') {
