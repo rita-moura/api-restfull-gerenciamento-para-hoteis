@@ -1,5 +1,6 @@
 import express from 'express';
 import swaggerUi from 'swagger-ui-express';
+import cors from 'cors';
 import routes from './routes';
 import { hateoasMiddleware } from './middlewares/hateoas';
 import { errorHandler } from './middlewares/errorHandler';
@@ -8,6 +9,7 @@ import { specs } from './swagger';
 const app = express();
 const port = 3000;
 
+app.use(cors());
 app.use(express.json());
 
 // Configuração do Swagger UI
