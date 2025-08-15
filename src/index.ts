@@ -1,6 +1,7 @@
 import express from 'express';
 import swaggerUi from 'swagger-ui-express';
 import cors from 'cors';
+import os from 'os';
 import routes from './routes';
 import { hateoasMiddleware } from './middlewares/hateoas';
 import { errorHandler } from './middlewares/errorHandler';
@@ -35,6 +36,23 @@ app.get('/', (req, res) => {
 app.use(routes);
 app.use(errorHandler);
 
-app.listen(port, () => {
-  console.log(`Server is running at http://localhost:${port}`);
+const getIpAddress = (): string => {
+    const networkInterfaces = os.networkInterfaces();
+    for (const interfaceName in networkInterfaces) {
+        const networkInterface = networkInterfaces[interfaceName];
+        if (networkInterface) {
+            for (const interfaceInfo of networkInterface) {
+                if (interfaceInfo.family === 'IPv4' && !interfaceInfo.internal) {
+                    return interfaceInfo.address;
+                }
+            }
+        }
+    }
+    return 'localhost'; // Fallback
+};
+
+const host = getIpAddress();
+
+app.listen(port, '0.0.0.0', () => {
+  console.log(`Server is running at http://${host}:${port}`);
 });
