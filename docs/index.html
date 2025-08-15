@@ -28,7 +28,10 @@
   <script>
     window.onload = function() {
       const ui = SwaggerUIBundle({
-        url: "swagger.json", // Caminho para o seu swagger.json
+        urls: [
+          { url: "swagger.json", name: "Local" },
+          { url: "https://raw.githubusercontent.com/rita-moura/api-restfull-gerenciamento-para-hoteis/main/docs/swagger.json", name: "GitHub Pages" }
+        ],
         dom_id: '#swagger-ui',
         deepLinking: true,
         persistAuthorization: false,

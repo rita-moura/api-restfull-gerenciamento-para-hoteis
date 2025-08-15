@@ -25,10 +25,13 @@ Esta é uma API RESTful para gerenciamento de hotéis e reservas, desenvolvida c
 
 ## Documentação da API
 
-A documentação completa da API está disponível através do Swagger UI. Após iniciar o servidor, acesse:
+A documentação completa da API está disponível através do Swagger UI. 
 
-
+- **Para acesso local, após iniciar o servidor, acesse:**
 [`http://localhost:3000/api-docs`](http://localhost:3000/api-docs)
+
+- **Para acesso via GitHub Pages, acesse:**
+[`https://rita-moura.github.io/api-restfull-gerenciamento-para-hoteis/`](https://rita-moura.github.io/api-restfull-gerenciamento-para-hoteis/)
 
 
 A interface do Swagger fornece:
