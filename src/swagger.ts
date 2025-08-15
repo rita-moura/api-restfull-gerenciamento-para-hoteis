@@ -19,8 +19,18 @@ const options: swaggerJsdoc.Options = {
     ],
     servers: [
       {
-        url: '/',
-        description: 'Servidor Relativo'
+        url: 'http://localhost:3000',
+        description: 'Servidor Local'
+      },
+      {
+        url: 'http://{localIp}:3000',
+        description: 'Servidor de Rede',
+        variables: {
+          localIp: {
+            default: '192.168.1.7',
+            description: 'IP da máquina na rede local'
+          }
+        }
       }
     ],
     components: {
