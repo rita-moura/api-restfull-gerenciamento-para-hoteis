@@ -16,67 +16,20 @@ interface ServerObject {
   variables?: Record<string, ServerVariable>;
 }
 
-// Função para obter IPs da rede local dinamicamente
-const getNetworkIps = (): string[] => {
-  const ips: string[] = [];
-  const interfaces = os.networkInterfaces();
-  for (const name of Object.keys(interfaces)) {
-    const anInterface = interfaces[name];
-    if (anInterface) {
-      for (const iface of anInterface) {
-        if (iface.family === 'IPv4' && !iface.internal) {
-          ips.push(iface.address);
-        }
-      }
-    }
-  }
-  return ips;
-};
-
 // Gerar servidores dinamicamente
 const generateServers = (): ServerObject[] => {
-  const servers: ServerObject[] = [
-    {
-      url: 'http://localhost:3000',
-      description: 'Servidor Local'
-    }
-  ];
-  
-  // Adicionar IPs da rede local
-  const localIps = getNetworkIps();
-  localIps.forEach(ip => {
+  const servers: ServerObject[] = [];
+
+  if (process.env.VERCEL_URL) {
     servers.push({
-      url: `http://${ip}:3000`,
-      description: `Servidor de Rede (${ip})`
+      url: `https://${process.env.VERCEL_URL}`,
+      description: 'Servidor de Produção (Vercel)'
     });
-  });
+  }
   
-  // Servidor genérico para deploy
   servers.push({
-    url: 'http://{host}:{port}',
-    description: 'Servidor de Deploy',
-    variables: {
-      host: {
-        default: 'localhost',
-        description: 'Hostname do servidor'
-      },
-      port: {
-        default: '3000',
-        description: 'Porta do servidor'
-      }
-    }
-  });
-  
-  // Adicionar servidor HTTPS para produção
-  servers.push({
-    url: 'https://{host}',
-    description: 'Servidor de Produção (HTTPS)',
-    variables: {
-      host: {
-        default: 'api.exemplo.com',
-        description: 'Hostname do servidor de produção'
-      }
-    }
+    url: 'http://localhost:3000',
+    description: 'Servidor Local'
   });
   
   return servers;

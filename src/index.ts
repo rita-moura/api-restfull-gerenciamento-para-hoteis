@@ -100,48 +100,7 @@ app.get('/', (req, res) => {
 app.use(routes);
 app.use(errorHandler);
 
-// Função para obter os endereços IP da rede local
-const getNetworkIps = (): string[] => {
-  const ips: string[] = [];
-  const interfaces = os.networkInterfaces();
-  for (const name of Object.keys(interfaces)) {
-    const anInterface = interfaces[name];
-    if (anInterface) {
-      for (const iface of anInterface) {
-        // Pular endereços internos (ex: 127.0.0.1) e não-ipv4
-        if (iface.family === 'IPv4' && !iface.internal) {
-          ips.push(iface.address);
-        }
-      }
-    }
-  }
-  return ips;
-};
+// A Vercel gerencia o ciclo de vida do servidor, então `app.listen` não é necessário.
+// A lógica de escuta do servidor e a descoberta de IP local foram removidas.
 
-app.listen(port, '0.0.0.0', () => {
-  console.log(`\n✅ Servidor rodando na porta ${port}`);
-  console.log(`✨ Acesse localmente em: http://localhost:${port}`);
-  console.log(`📚 Documentação Swagger: http://localhost:${port}/api-docs`);
-
-  const localIps = getNetworkIps();
-  if (localIps.length > 0) {
-    console.log('\n🌐 Ou acesse de outros dispositivos na mesma rede em:');
-    localIps.forEach(ip => {
-      console.log(`   - API: http://${ip}:${port}`);
-      console.log(`   - Docs: http://${ip}:${port}/api-docs`);
-    });
-  }
-
-  console.log('\n🔗 Endpoints disponíveis:');
-  console.log('   - GET  /hotels');
-  console.log('   - POST /hotels');
-  console.log('   - GET  /hotels/:id');
-  console.log('   - PUT  /hotels/:id');
-  console.log('   - DELETE /hotels/:id');
-  console.log('   - GET  /bookings');
-  console.log('   - POST /bookings');
-  console.log('   - GET  /bookings/:id');
-  console.log('   - DELETE /bookings/:id');
-  console.log('   - GET  /hotels/:hotelId/bookings');
-  console.log('   - POST /rpc');
-});
+export default app;
