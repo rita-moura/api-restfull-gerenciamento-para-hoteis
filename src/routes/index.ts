@@ -20,6 +20,12 @@ const router = Router();
  *               type: array
  *               items:
  *                 $ref: '#/components/schemas/Hotel'
+ *       500:
+ *         description: Erro ao buscar hotéis
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
  */
 router.get('/hotels', HotelController.index);
 
@@ -70,6 +76,12 @@ router.get('/hotels/:id', HotelController.show);
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/Hotel'
+ *       400:
+ *         description: Não foi possível criar o hotel
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
  */
 router.post('/hotels', HotelController.store);
 
@@ -99,7 +111,11 @@ router.post('/hotels', HotelController.store);
  *             schema:
  *               $ref: '#/components/schemas/Hotel'
  *       404:
- *         description: Hotel não encontrado
+ *          description: Hotel não encontrado
+ *          content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
  */
 router.put('/hotels/:id', HotelController.update);
 

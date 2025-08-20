@@ -5,10 +5,8 @@ import os from 'os';
 import routes from './routes';
 import { hateoasMiddleware } from './middlewares/hateoas';
 import { errorHandler } from './middlewares/errorHandler';
-import { swaggerCorsMiddleware, swaggerSecurityMiddleware } from './middlewares/swaggerCors';
 import { specs } from './swagger';
 import config from './utils/envConfig';
-import './types/swagger'; // Importar tipos customizados
 
 const app = express();
 const port = config.port;
@@ -69,16 +67,8 @@ const swaggerOptions: swaggerUi.SwaggerUiOptions = {
   explorer: false, // Desabilita o explorador de URLs
 };
 
-// Aplicar middlewares específicos para Swagger UI
-app.use('/api-docs', swaggerCorsMiddleware);
-app.use('/api-docs', swaggerSecurityMiddleware);
-app.use('/api-docs', cors(corsOptions));
-app.use('/api-docs', swaggerUi.serve);
-
-app.get('/swagger.json', swaggerCorsMiddleware, (req, res) => {
-  res.setHeader('Content-Type', 'application/json');
-  res.json(specs);
-});
+// Configuração do Swagger UI
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs, swaggerOptions));
 
 // Aplicar middleware HATEOAS para os tipos de recursos
 app.use('/hotels', hateoasMiddleware('hotel'));
@@ -100,7 +90,36 @@ app.get('/', (req, res) => {
 app.use(routes);
 app.use(errorHandler);
 
-// A Vercel gerencia o ciclo de vida do servidor, então `app.listen` não é necessário.
-// A lógica de escuta do servidor e a descoberta de IP local foram removidas.
+// Função para obter os endereços IP da rede local
+const getNetworkIps = (): string[] => {
+  const ips: string[] = [];
+  const interfaces = os.networkInterfaces();
+  for (const name of Object.keys(interfaces)) {
+    const anInterface = interfaces[name];
+    if (anInterface) {
+      for (const iface of anInterface) {
+        // Pular endereços internos (ex: 127.0.0.1) e não-ipv4
+        if (iface.family === 'IPv4' && !iface.internal) {
+          ips.push(iface.address);
+        }
+      }
+    }
+  }
+  return ips;
+};
+
+// Iniciar o servidor apenas em ambiente de desenvolvimento
+if (process.env.NODE_ENV !== 'production') {
+  app.listen(port, () => {
+    console.log(`Servidor rodando na porta ${port}`);
+    const networkIps = getNetworkIps();
+    if (networkIps.length > 0) {
+      console.log('Disponível também em:');
+      networkIps.forEach(ip => {
+        console.log(`- http://${ip}:${port}`);
+      });
+    }
+  });
+}
 
 export default app;
