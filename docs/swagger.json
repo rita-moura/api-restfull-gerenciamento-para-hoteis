@@ -13,22 +13,20 @@
     {
       "name": "RPC",
       "description": "Operações via Remote Procedure Call (Nível 0)"
+    },
+    {
+      "name": "Hotéis",
+      "description": "Operações de gerenciamento de hotéis"
+    },
+    {
+      "name": "Reservas",
+      "description": "Operações de gerenciamento de reservas"
     }
   ],
   "servers": [
     {
       "url": "http://localhost:3000",
       "description": "Servidor Local"
-    },
-    {
-      "url": "http://{localIp}:3000",
-      "description": "Servidor de Rede",
-      "variables": {
-        "localIp": {
-          "default": "172.17.0.1",
-          "description": "IP da máquina na rede local"
-        }
-      }
     }
   ],
   "components": {
