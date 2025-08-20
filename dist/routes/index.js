@@ -23,6 +23,12 @@ const router = (0, express_1.Router)();
  *               type: array
  *               items:
  *                 $ref: '#/components/schemas/Hotel'
+ *       500:
+ *         description: Erro ao buscar hotéis
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
  */
 router.get('/hotels', HotelController_1.default.index);
 /**
@@ -71,6 +77,12 @@ router.get('/hotels/:id', HotelController_1.default.show);
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/Hotel'
+ *       400:
+ *         description: Não foi possível criar o hotel
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
  */
 router.post('/hotels', HotelController_1.default.store);
 /**
@@ -99,7 +111,11 @@ router.post('/hotels', HotelController_1.default.store);
  *             schema:
  *               $ref: '#/components/schemas/Hotel'
  *       404:
- *         description: Hotel não encontrado
+ *          description: Hotel não encontrado
+ *          content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
  */
 router.put('/hotels/:id', HotelController_1.default.update);
 /**

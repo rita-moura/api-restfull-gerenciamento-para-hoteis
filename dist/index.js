@@ -6,13 +6,12 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const swagger_ui_express_1 = __importDefault(require("swagger-ui-express"));
 const cors_1 = __importDefault(require("cors"));
+const os_1 = __importDefault(require("os"));
 const routes_1 = __importDefault(require("./routes"));
 const hateoas_1 = require("./middlewares/hateoas");
 const errorHandler_1 = require("./middlewares/errorHandler");
-const swaggerCors_1 = require("./middlewares/swaggerCors");
 const swagger_1 = require("./swagger");
 const envConfig_1 = __importDefault(require("./utils/envConfig"));
-require("./types/swagger"); // Importar tipos customizados
 const app = (0, express_1.default)();
 const port = envConfig_1.default.port;
 // Configuração CORS mais robusta
@@ -64,15 +63,8 @@ const swaggerOptions = {
     customSiteTitle: "API de Gerenciamento de Hotéis",
     explorer: false, // Desabilita o explorador de URLs
 };
-// Aplicar middlewares específicos para Swagger UI
-app.use('/api-docs', swaggerCors_1.swaggerCorsMiddleware);
-app.use('/api-docs', swaggerCors_1.swaggerSecurityMiddleware);
-app.use('/api-docs', (0, cors_1.default)(corsOptions));
-app.use('/api-docs', swagger_ui_express_1.default.serve);
-app.get('/swagger.json', swaggerCors_1.swaggerCorsMiddleware, (req, res) => {
-    res.setHeader('Content-Type', 'application/json');
-    res.json(swagger_1.specs);
-});
+// Configuração do Swagger UI
+app.use('/api-docs', swagger_ui_express_1.default.serve, swagger_ui_express_1.default.setup(swagger_1.specs, swaggerOptions));
 // Aplicar middleware HATEOAS para os tipos de recursos
 app.use('/hotels', (0, hateoas_1.hateoasMiddleware)('hotel'));
 app.use('/bookings', (0, hateoas_1.hateoasMiddleware)('booking'));
@@ -90,6 +82,34 @@ app.get('/', (req, res) => {
 });
 app.use(routes_1.default);
 app.use(errorHandler_1.errorHandler);
-// A Vercel gerencia o ciclo de vida do servidor, então `app.listen` não é necessário.
-// A lógica de escuta do servidor e a descoberta de IP local foram removidas.
+// Função para obter os endereços IP da rede local
+const getNetworkIps = () => {
+    const ips = [];
+    const interfaces = os_1.default.networkInterfaces();
+    for (const name of Object.keys(interfaces)) {
+        const anInterface = interfaces[name];
+        if (anInterface) {
+            for (const iface of anInterface) {
+                // Pular endereços internos (ex: 127.0.0.1) e não-ipv4
+                if (iface.family === 'IPv4' && !iface.internal) {
+                    ips.push(iface.address);
+                }
+            }
+        }
+    }
+    return ips;
+};
+// Iniciar o servidor apenas em ambiente de desenvolvimento
+if (process.env.NODE_ENV !== 'production') {
+    app.listen(port, () => {
+        console.log(`Servidor rodando na porta ${port}`);
+        const networkIps = getNetworkIps();
+        if (networkIps.length > 0) {
+            console.log('Disponível também em:');
+            networkIps.forEach(ip => {
+                console.log(`- http://${ip}:${port}`);
+            });
+        }
+    });
+}
 exports.default = app;
