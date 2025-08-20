@@ -74,8 +74,15 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs, swaggerOptions));
 app.use('/hotels', hateoasMiddleware('hotel'));
 app.use('/bookings', hateoasMiddleware('booking'));
 
+// Rota para servir o swagger.json
+app.get('/swagger.json', (req, res) => {
+  res.setHeader('Content-Type', 'application/json');
+  res.send(specs);
+});
+
 // Adicionar rota raiz
 app.get('/', (req, res) => {
+  const baseUrl = config.getBaseUrl();
   res.json({
     message: 'API de Gerenciamento de Hotéis',
     documentation: '/api-docs',
