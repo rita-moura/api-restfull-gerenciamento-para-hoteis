@@ -2,10 +2,11 @@ import express from 'express';
 import swaggerUi from 'swagger-ui-express';
 import cors from 'cors';
 import os from 'os';
+import path from 'path';
+import fs from 'fs';
 import routes from './routes';
 import { hateoasMiddleware } from './middlewares/hateoas';
 import { errorHandler } from './middlewares/errorHandler';
-import { specs } from './swagger';
 import config from './utils/envConfig';
 
 const app = express();
@@ -52,6 +53,26 @@ app.options('*', cors(corsOptions));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+// --- Início da Lógica do Swagger ---
+
+let specs: any;
+
+if (config.isProduction()) {
+  // Em produção (Vercel), leia o arquivo gerado no build
+  try {
+    const swaggerFilePath = path.join(__dirname, 'swagger.json');
+    const swaggerFile = fs.readFileSync(swaggerFilePath, 'utf8');
+    specs = JSON.parse(swaggerFile);
+  } catch (error) {
+    console.error("Could not read swagger.json in production:", error);
+    specs = { openapi: '3.0.0', info: { title: 'Error', version: '1.0.0', description: 'Could not load swagger spec.' }, paths: {} };
+  }
+} else {
+  // Em desenvolvimento, gere dinamicamente
+  const { specs: devSpecs } = require('./swagger');
+  specs = devSpecs;
+}
+
 // Configuração específica do Swagger UI com opções adicionais
 const swaggerOptions: swaggerUi.SwaggerUiOptions = {
   swaggerOptions: {
@@ -70,15 +91,17 @@ const swaggerOptions: swaggerUi.SwaggerUiOptions = {
 // Configuração do Swagger UI
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs, swaggerOptions));
 
-// Aplicar middleware HATEOAS para os tipos de recursos
-app.use('/hotels', hateoasMiddleware('hotel'));
-app.use('/bookings', hateoasMiddleware('booking'));
-
 // Rota para servir o swagger.json
 app.get('/swagger.json', (req, res) => {
   res.setHeader('Content-Type', 'application/json');
   res.send(specs);
 });
+
+// --- Fim da Lógica do Swagger ---
+
+// Aplicar middleware HATEOAS para os tipos de recursos
+app.use('/hotels', hateoasMiddleware('hotel'));
+app.use('/bookings', hateoasMiddleware('booking'));
 
 // Adicionar rota raiz
 app.get('/', (req, res) => {

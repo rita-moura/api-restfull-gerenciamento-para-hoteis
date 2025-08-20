@@ -10,7 +10,7 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "swagger": "ts-node src/swagger.ts",
-    "vercel-build": "npm run swagger && tsc"
+    "vercel-build": "npm run swagger && tsc && cp docs/swagger.json dist/"
   },
   "keywords": [],
   "author": "",
